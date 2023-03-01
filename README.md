@@ -1,41 +1,77 @@
 # k8s
 
 apiVersion: autoscaling/v2beta2
+
 kind: HorizontalPodAutoscaler
+
 metadata:
+
   name: nginx
+  
 spec:
+
   scaleTargetRef:
+  
     apiVersion: apps/v1
+    
     kind: Deployment
+    
     name: nginx
+    
   minReplicas: 1
+  
   maxReplicas: 10
+  
   metrics:
+  
   - type: Resource
+ 
     resource:
+    
       name: cpu
+      
       target:
+      
         type: Utilization
+        
         averageUtilization: 50
+        
   - type: Object
+ 
     object:
+    
       metric:
+      
         name: requests-per-second
+        
       describedObject:
+      
         apiVersion: networking.k8s.io/v1
+        
         kind: Ingress
-        name: main-route 
+        
+        name: main-route
+        
       target:
+      
         type : Value 
+        
         value : "2k"
+        
   behavior:
+  
     scaleDown:
+    
       stabilizationWindowSeconds :300 
+      
       policies :
+      
        - type : Pods 
+       
          value :4 
+         
          periodSeconds :60 
+         
 
 This YAML file creates an HPA named nginx that targets a deployment named nginx. It specifies a minimum of 1 replica and a maximum of 10 replicas. The HPA scales based on two metrics:
 
